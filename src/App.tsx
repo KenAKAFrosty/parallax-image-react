@@ -15,17 +15,17 @@ function App() {
       <header className="App-header">
 
         <ParallaxImage
+        viewportHeight={500}
           containerRef={containerRef}
           containerStyle={{
             boxShadow: "inset 0px 0px 7px rgba(0,0,0,0.7)",
             borderRadius: 6,
-            overflow: "auto"
+            height: "800px"
           }}
+          height={750}
           src={logo}
-          height={500}
           className="App-logo"
           alt="logo"
-          style={{}}
         />
 
       </header>
