@@ -9,6 +9,7 @@ export interface ParallaxImageProps extends React.DetailedHTMLProps<React.ImgHTM
 const lockedContainerStyles: CSSProperties = {
     overflow: "hidden",
     width: "fit-content",
+
     height: "viewportHeight"
 }
 
@@ -18,16 +19,20 @@ export default function ParallaxImage(props: ParallaxImageProps) {
 
     const containerStyle: CSSProperties = {...props.containerStyle, ...lockedContainerStyles};
     containerStyle.height = props.viewportHeight
-    const [hasLoaded, setHasLoaded] = useState(false)
+    const [loadStarted, setLoadStarted] = useState(false);
+    const [loadFinished, setLoadFinished] = useState(false)
     const imageRef = useRef<HTMLImageElement>(null);
 
-    useEffect(load, []);
+    useEffect(()=>{ setLoadStarted(true) }, []);
+    useEffect(load, [loadStarted])
 
     function load() {
+        if (!loadStarted) { return }
+
         warnUserIfStylesOverridden(props.containerStyle);
         const img = imageRef.current as HTMLImageElement;
         window.addEventListener('scroll', (event) => { handleScroll(event, img) })
-        setHasLoaded(true);
+        setLoadFinished(true);
     }
 
     function handleScroll(event: Event, img: HTMLImageElement) {
@@ -57,7 +62,7 @@ export default function ParallaxImage(props: ParallaxImageProps) {
                 width={"100%"}
                 height={"100%"}
                 {...imgPropsToPass}
-                ref={hasLoaded && props.ref ? props.ref : imageRef}
+                ref={loadFinished && props.ref ? props.ref : imageRef}
             />
         </div>
     )
