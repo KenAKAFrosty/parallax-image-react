@@ -14,7 +14,8 @@ const lockedContainerStyles: CSSProperties = {
 
 export default function ParallaxImage(props: ParallaxImageProps) {
     const [height, setHeight] = useState(validateAndGetHeight(props));
-    const [waitForImageToLoad, setWaitForImageToLoad] = useState(!!height)
+    console.log(!!height)
+    const [waitForImageToLoad, setWaitForImageToLoad] = useState(!height)
     if (waitForImageToLoad && isDev()) { 
         console.warn(`Image height was not explicitly passed. `)
     }
@@ -125,11 +126,11 @@ function validateAndGetHeight(props: ParallaxImageProps) {
 }
 
 function elementIsAboveTheFold(element: HTMLElement) {
-    return element.offsetTop < window.innerHeight
+    return getAbsoluteOffsetTop(element) < window.innerHeight
 }
 
 function elementIsOnBottomFold(element: HTMLElement) {
-    return document.documentElement.offsetHeight - window.innerHeight < (element.offsetHeight + element.offsetTop);
+    return document.documentElement.offsetHeight - window.innerHeight < (element.offsetHeight + getAbsoluteOffsetTop(element));
 }
 
 function isDev() {
@@ -167,17 +168,17 @@ type FunctionByImagePosition = {
 
 const percentageScrolledByImagePosition: FunctionByImagePosition = {
     "middle": (element: HTMLElement) => {
-        const pxScrolled = (Math.ceil(window.scrollY) + window.innerHeight) - element.offsetTop;
+        const pxScrolled = (Math.ceil(window.scrollY) + window.innerHeight) - getAbsoluteOffsetTop(element);
         const percentageScrolled = (pxScrolled / (window.innerHeight + element.offsetHeight));
         return getClampedPercentage(percentageScrolled)
     },
     "top": (element: HTMLElement) => {
-        const percentageScrolled = Math.ceil(window.scrollY) / (element.offsetTop + element.offsetHeight)
+        const percentageScrolled = Math.ceil(window.scrollY) / (getAbsoluteOffsetTop(element) + element.offsetHeight)
         return getClampedPercentage(percentageScrolled)
     },
     "bottom": (element: HTMLElement) => {
-        const percentageScrolled = (Math.ceil(window.scrollY + window.innerHeight) - element.offsetTop) /
-            (document.documentElement.scrollHeight - element.offsetTop)
+        const percentageScrolled = (Math.ceil(window.scrollY + window.innerHeight) - getAbsoluteOffsetTop(element)) /
+            (document.documentElement.scrollHeight - getAbsoluteOffsetTop(element))
         return getClampedPercentage(percentageScrolled)
     },
     "alwaysVisible": (element: HTMLElement) => {
@@ -230,4 +231,8 @@ function getTransformValue(element: HTMLElement, transformProperty: TransformPro
     const matches = element.style.transform.match(propertyRegex);
     if (!matches) { return null };
     return matches[1];
+}
+
+function getAbsoluteOffsetTop(element: HTMLElement) { 
+    return (element.getBoundingClientRect().top + window.scrollY)
 }

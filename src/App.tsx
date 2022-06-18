@@ -10,14 +10,21 @@ function App() {
   return (
     <div
       className="App"
-      style={{ display: "flex", flexDirection: "column", minHeight: "500vh", justifyContent: "flex-start" }}>
+      style={{ display: "flex", flexDirection: "column", minHeight: "500vh", justifyContent: "center" }}>
 
       <header className="App-header">
 
-        <ParallaxImage
-          width={"100%"}
-          src={movingCouple}
-        />
+        <div style={{position:"relative"}}>
+          <ParallaxImage
+            viewportHeight={300}
+            height={800}
+            width={"100%"}
+            src={movingCouple}
+          />
+          <p style={{position: "absolute", top:"45%", left: "45%", backgroundColor: "rgba(0,0,0,0.5)", color: "white"}}>
+            {`Hi I'm a test!`}
+          </p>
+        </div>
 
       </header>
     </div>
