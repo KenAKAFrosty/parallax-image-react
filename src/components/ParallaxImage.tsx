@@ -14,7 +14,6 @@ const lockedContainerStyles: CSSProperties = {
 
 export default function ParallaxImage(props: ParallaxImageProps) {
     const [height, setHeight] = useState(validateAndGetHeight(props));
-    console.log(!!height)
     const [waitForImageToLoad, setWaitForImageToLoad] = useState(!height)
     if (waitForImageToLoad && isDev()) { 
         console.warn(`Image height was not explicitly passed. `)
@@ -66,8 +65,6 @@ export default function ParallaxImage(props: ParallaxImageProps) {
 
             <img
                 style={{ margin: 0, padding: 0 }}
-                width={"100%"}
-                height={"100%"}
                 {...imgPropsToPass}
                 ref={loadFinished && props.ref ? props.ref : imageRef}
             />
@@ -88,7 +85,7 @@ function getRoomToSlide(height: string | number | null, viewportHeight: number |
         : viewportHeight.includes("px") ? parseInt(viewportHeight)
             : (parseInt(viewportHeight) / 100) * pixelsHeight
 
-
+    console.log(viewportPixelsHeight)
     if (viewportHeight > pixelsHeight) {
         throw Error('Viewport height larger than height. Use default viewportheight, like 75% of height or something');
     };
@@ -148,15 +145,14 @@ function getPercentageScrolled(container: HTMLElement): number {
     const aboveFold = elementIsAboveTheFold(container);
     const isOnBottomFold = elementIsOnBottomFold(container);
 
-    if (!aboveFold && !isOnBottomFold) {
-        return percentageScrolledByImagePosition["middle"](container)
-    }
     if (aboveFold && !isOnBottomFold) {
         return percentageScrolledByImagePosition["top"](container);
     }
-
     if (!aboveFold && isOnBottomFold) {
         return percentageScrolledByImagePosition["bottom"](container);
+    }
+    if (!aboveFold && !isOnBottomFold) {
+        return percentageScrolledByImagePosition["middle"](container)
     }
 
     return percentageScrolledByImagePosition["alwaysVisible"](container)
